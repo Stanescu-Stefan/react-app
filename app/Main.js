@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useImmerReducer } from "use-immer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -22,13 +22,19 @@ import FlashMessages from "./components/FlashMessages";
 function Main() {
   const initialState = {
     loggedIn: Boolean(localStorage.getItem("reactappToken")),
-    flashMessages: []
+    flashMessages: [],
+    user: {
+      token: localStorage.getItem("reactappToken"),
+      username: localStorage.getItem("reactappUsername"),
+      avatar: localStorage.getItem("reactappAvatar")
+    }
   };
 
   function ourReducer(draft, action) {
     switch (action.type) {
       case "login":
         draft.loggedIn = true;
+        draft.user = action.data;
         break;
       case "logout":
         draft.loggedIn = false;
@@ -40,6 +46,18 @@ function Main() {
   }
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialState);
+
+  useEffect(() => {
+    if (state.loggedIn) {
+      localStorage.setItem("reactappToken", state.user.token);
+      localStorage.setItem("reactappUsername", state.user.username);
+      localStorage.setItem("reactappAvatar", state.user.avatar);
+    } else {
+      localStorage.removeItem("reactappToken");
+      localStorage.removeItem("reactappUsername");
+      localStorage.removeItem("reactappAvatar");
+    }
+  }, [state.loggedIn]);
 
   return (
     <StateContext.Provider value={state}>
