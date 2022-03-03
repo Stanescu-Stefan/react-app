@@ -21,6 +21,7 @@ import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
+import Search from "./components/Search";
 
 function Main() {
   const initialState = {
@@ -30,7 +31,8 @@ function Main() {
       token: localStorage.getItem("reactappToken"),
       username: localStorage.getItem("reactappUsername"),
       avatar: localStorage.getItem("reactappAvatar")
-    }
+    },
+    isSearchOpen: false
   };
 
   function ourReducer(draft, action) {
@@ -38,13 +40,19 @@ function Main() {
       case "login":
         draft.loggedIn = true;
         draft.user = action.data;
-        break;
+        return;
       case "logout":
         draft.loggedIn = false;
-        break;
+        return;
       case "flashMessage":
         draft.flashMessages.push(action.value);
-        break;
+        return;
+      case "openSearch":
+        draft.isSearchOpen = true;
+        return;
+      case "closeSearch":
+        draft.isSearchOpen = false;
+        return;
     }
   }
 
@@ -78,6 +86,7 @@ function Main() {
             <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          {state.isSearchOpen ? <Search /> : ""}
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
