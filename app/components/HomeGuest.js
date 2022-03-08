@@ -43,7 +43,7 @@ function HomeGuest() {
           draft.username.hasErrors = true;
           draft.username.message = "Username can only contain letters and numbers";
         }
-        if (!draft.hasErrors) {
+        if (!draft.username.hasErrors) {
           draft.username.checkCount++;
         }
         return;
